@@ -68,6 +68,8 @@ bool GraphicsDevice::TryCreateDeviceOnAdapter(const Microsoft::WRL::ComPtr<IDXGI
             return true;
         }
     }
+
+    return false;
 }
 
 bool GraphicsDevice::CreateWithWarpFallback()
