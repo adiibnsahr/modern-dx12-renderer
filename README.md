@@ -21,6 +21,12 @@ Sebuah project minimalis mesin render
 - Microsoft Sample: `D3D12HelloWorld`, `GetHardwareAdapter`, skip software adapter, iterasi melalui `EnumAdapterByGpuPreference`
 - Microsoft Learn: `D3D12CreteDevice`, `CheckFeatureSupport`, `EnumWarpAdapter`
 
+**Flow**
+![Flowchart v0.0.1](docs/v0.0.1/flowchart_v0.0.1.png)
+
+**Screenshot**
+![Screenshot v0.0.1](docs/v0.0.1/screenshot_v0.0.1.png)
+
 **Build dan Run**
 ```bash
 cmake --preset windows-msvc
