@@ -25,7 +25,7 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
               with:
                 submodules: recursive
 
@@ -33,7 +33,7 @@ jobs:
               uses: lukka/get-cmake@latest
 
             - name: Cache FetchContent downloads
-              uses: actions/cache@v4
+              uses: actions/cache@v5
               with:
                 path: ${{ env.FC_DEPS_DIR }}
                 key: ${{ runner.os }}-fetchcontent-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
@@ -41,7 +41,7 @@ jobs:
                     ${{ runner.os }}-fetchcontent-
             
             - name: Cache build dir
-              uses: actions/cache@v4
+              uses: actions/cache@v5
               with:
                 path: build
                 key: ${{ runner.os }}-build-${{ matrix.buildPreset }}-${{ hashFiles('**/CMakeLists.txt') }}
@@ -59,7 +59,7 @@ jobs:
               run: ctest -C ${{ matrix.configuration }} --output-on-failure
 
             - name: Upload build artifacts
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v6
               with:
                 name: renderer-${{ matrix.buildPreset }}
                 path: |
