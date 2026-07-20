@@ -1,0 +1,70 @@
+name: CI
+
+on:
+    push:
+        branches: [ main ]
+    pull_request:
+        branches: [ main ]
+    workflow_dispatch:
+
+jobs:
+    build:
+        name: Build (${{ matrix.buildPreset }})
+        runs-on: windows-2025-vs2026
+        strategy:
+            fail-fast: false
+            matrix:
+                include:
+                    - buildPreset: debug
+                      configuration: Debug
+                    - buildPreset: release
+                      configuration: Release
+
+        env:
+            FC_DEPS_DIR: ${{ github.workspace }}/.fc-deps
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                submodules: recursive
+
+            - name: Setup latest CMake
+              uses: lukka/get-cmake@latest
+
+            - name: Cache FetchContent downloads
+              uses: actions/cache@v4
+              with:
+                path: ${{ env.FC_DEPS_DIR }}
+                key: ${{ runner.os }}-fetchcontent-${{ hashFiles('**/CMakeLists.txt', '**/*.cmake') }}
+                restore-keys: |
+                    ${{ runner.os }}-fetchcontent-
+            
+            - name: Cache build dir
+              uses: actions/cache@v4
+              with:
+                path: build
+                key: ${{ runner.os }}-build-${{ matrix.buildPreset }}-${{ hashFiles('**/CMakeLists.txt') }}
+                restore-keys: |
+                    ${{ runner.os }}-build-${{ matrix.buildPreset }}-
+
+            - name: Configure (preset windows-msvc)
+              run: cmake --preset windows-msvc -DFETCHCONTENT_BASE_DIR=${{ env.FC_DEPS_DIR }}
+
+            - name: Build (preset ${{ matrix.buildPreset }})
+              run: cmake --build --preset ${{ matrix.buildPreset }}
+
+            - name: Run tests
+              working-directory: build
+              run: ctest -C ${{ matrix.configuration }} --output-on-failure
+
+            - name: Upload build artifacts
+              uses: actions/upload-artifact@v4
+              with:
+                name: renderer-${{ matrix.buildPreset }}
+                path: |
+                    build/${{ matrix.configuration }}/**/*.exe
+                    build/${{ matrix.configuration }}/**/*.dll
+                    build/${{ matrix.configuration }}/**/*.pdb
+                if-no-files-found: warn
+
