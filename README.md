@@ -6,7 +6,7 @@ Sebuah project minimalis mesin render
 
 | Komponen | Pilihan |
 |---|---|
-| Bahasa | C++20 (`.hpp`/`.cpp`) |
+| Languange | C++20 (`.hpp`/`.cpp`) |
 | Graphics API | DirectX 12 (Agility SDK, Feature Level target `12_2`, minimum `11_0`) |
 | Build system | CMake ≥ 4.3 (`FetchContent`, tanpa vcpkg) |
 | Compiler | MSVC (Visual Studio 2026 Build Tools) |
@@ -17,7 +17,7 @@ Sebuah project minimalis mesin render
 - Windowing tanpa swapchain
 
 **Referensi:**
-- Buku Frank Luna: `d3d12book_2ed`, `Common/d3dUtil.h`, `ThrowIfFailed`
+- Buku Frank Luna (Introduction Game Programming DX12 Second Edition): `d3d12book_2ed`, `Common/d3dUtil.h`, `ThrowIfFailed`
 - Microsoft Sample: `D3D12HelloWorld`, `GetHardwareAdapter`, skip software adapter, iterasi melalui `EnumAdapterByGpuPreference`
 - Microsoft Learn: `D3D12CreteDevice`, `CheckFeatureSupport`, `EnumWarpAdapter`
 
@@ -26,6 +26,22 @@ Sebuah project minimalis mesin render
 
 **Screenshot**
 ![Screenshot v0.0.1](docs/v0.0.1/screenshot_v0.0.1.png)
+
+## Version 0.0.2
+- Windowing dengan implementasi Swapchain
+- Implementasi triple buffering
+- Clear screen
+
+**Referensi**
+- Buku Frank Luna (Introduction Game Programming DX12 Second Edition): Chapter 4 Dasar pola command queue, command list, fence dan renderloop
+- Microsoft Sample: `FrameResource`, `D3D12HelloFrameBuffering` command allocator per-frame, bukan dibagi
+- Microsoft Learn: `IDXGISwapChain2::SetMaximumFrameLatency`, `GetFrameLatencyWaitableObject`, `IDXGIFactory2::CreateSwapChainForHwnd`
+
+**Flow**
+![Flowchart v0.0.1](docs/v0.0.2/flowchart_v0.0.2.png)
+
+**Screenshot**
+![Screenshot v0.0.1](docs/v0.0.2/screenshot_v0.0.2.png)
 
 **Build dan Run**
 ```bash

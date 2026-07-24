@@ -25,6 +25,13 @@ add_executable(App
     src/RHI/D3DUtil.hpp
     src/RHI/GraphicsDevice.hpp
     src/RHI/GraphicsDevice.cpp
+    src/RHI/CommandQueue.hpp
+    src/RHI/CommandQueue.cpp
+    src/RHI/CommandContext.hpp
+    src/RHI/CommandContext.cpp
+    src/RHI/FrameResource.hpp
+    src/RHI/SwapChain.hpp
+    src/RHI/SwapChain.cpp
 )
 
 target_include_directories(App PRIVATE
