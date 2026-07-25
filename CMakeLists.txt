@@ -32,6 +32,9 @@ add_executable(App
     src/RHI/FrameResource.hpp
     src/RHI/SwapChain.hpp
     src/RHI/SwapChain.cpp
+    src/RHI/UploadBuffer.hpp
+    src/Renderer/CubeRenderer.hpp
+    src/Renderer/CubeRenderer.cpp
 )
 
 target_include_directories(App PRIVATE
@@ -70,3 +73,56 @@ if (DEFINED agility_sdk_SOURCE_DIR)
         COMMENT "Copy runtime Agility SDK ke folder D3D12/ di App.exe"
     )
 endif()
+
+if(DEFINED dxc_SOURCE_DIR)
+    find_program(DXC_EXECUTABLE
+        NAMES dxc.exe dxc
+        PATHS ${dxc_SOURCE_DIR}
+        PATH_SUFFIXES "build/native/bin/x64" "bin/x64"
+        NO_DEFAULT_PATH
+    )
+    if(NOT DXC_EXECUTABLE)
+        file(GLOB_RECURSE DXC_EXE_CANDIDATES "${dxc_SOURCE_DIR}/*dxc.exe")
+        if(DXC_EXE_CANDIDATES)
+            list(GET DXC_EXE_CANDIDATES 0 DXC_EXECUTABLE)
+        endif()
+    endif()
+endif()
+
+if(NOT DXC_EXECUTABLE)
+    message(FATAL_ERROR
+        "dxc.exe tidak ditemukan didalam pake Microsoft.Direct3D.DXC yang difetch"
+    )
+endif()
+message(STATUS "RenderEngine: menggunakan DXC dari ${DXC_EXECUTABLE}")
+
+set(SHADER_OUTPUT_DIR ${CMAKE_BINARY_DIR}/CompiledShaders)
+file(MAKE_DIRECTORY ${SHADER_OUTPUT_DIR})
+
+function(modernengine_compile_hlsl SHADER_FILE ENTRY_POINT PROFILE OUTPUT_CSO)
+    add_custom_command(
+        OUTPUT ${OUTPUT_CSO}
+        COMMAND ${DXC_EXECUTABLE} -T ${PROFILE} -E ${ENTRY_POINT} -Fo ${OUTPUT_CSO} ${SHADER_FILE}
+        DEPENDS ${SHADER_FILE}
+        COMMENT "DXC: ${SHADER_FILE} [${ENTRY_POINT}, ${PROFILE}] -> ${OUTPUT_CSO}"
+        VERBATIM
+    )
+endfunction()
+
+set(CUBE_HLSL ${CMAKE_CURRENT_SOURCE_DIR}/src/Shaders/Cube.hlsl)
+set(CUBE_VS_CSO ${SHADER_OUTPUT_DIR}/CubeVS.cso)
+set(CUBE_PS_CSO ${SHADER_OUTPUT_DIR}/CubePS.cso)
+
+modernengine_compile_hlsl(${CUBE_HLSL} VSMain vs_6_0 ${CUBE_VS_CSO})
+modernengine_compile_hlsl(${CUBE_HLSL} PSMain ps_6_0 ${CUBE_PS_CSO})
+
+add_custom_target(CompiledShaders DEPENDS ${CUBE_VS_CSO} ${CUBE_PS_CSO})
+add_dependencies(App CompiledShaders)
+
+add_custom_command(TARGET App POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:App>/Shaders"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CUBE_VS_CSO} "$<TARGET_FILE_DIR:App>/Shaders/CubeVS.cso"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CUBE_PS_CSO} "$<TARGET_FILE_DIR:App>/Shaders/CubePS.cso"
+    COMMENT "Menyalin shader yang sudah di compile ke folder Shaders/"
+)
+

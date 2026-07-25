@@ -24,6 +24,8 @@ public:
     [[nodiscard]] bool IsWarp() const { return m_usingWarp; }
     [[nodiscard]] const std::wstring& AdapterDescription() const { return m_adapterDescription; }
 
+    [[nodiscard]] D3D_SHADER_MODEL MaxShaderModel() const { return m_maxShaderModel; }
+
     [[nodiscard]] std::wstring DescribeForTitleBar() const;
 
 private:
@@ -39,6 +41,7 @@ private:
     Microsoft::WRL::ComPtr<ID3D12Device> m_device;
 
     D3D_FEATURE_LEVEL m_featureLevel = D3D_FEATURE_LEVEL_11_0;
+    D3D_SHADER_MODEL m_maxShaderModel = D3D_SHADER_MODEL_5_1;
     bool m_usingWarp = false;
     bool m_debugLayerEnabled = false;
     std::wstring m_adapterDescription;

@@ -131,6 +131,18 @@ bool GraphicsDevice::Initialize()
                  m_adapterDescription.c_str(),
                 static_cast<unsigned>(m_featureLevel),
                 m_usingWarp ? L"WARP (Software)" : L"Hardware");
+
+    D3D12_FEATURE_DATA_SHADER_MODEL shaderModel{};
+    shaderModel.HighestShaderModel = D3D_SHADER_MODEL_6_7;
+    if (SUCCEEDED(m_device->CheckFeatureSupport(
+            D3D12_FEATURE_SHADER_MODEL, &shaderModel, sizeof(shaderModel)
+    )))
+    {
+        m_maxShaderModel = shaderModel.HighestShaderModel;
+    }
+    std::wprintf(L"[GraphicsDevice] Shader Model tertinggi yang didukung: 0x%x "
+                 L"(DXC butuh setidaknya Shader Model 6.0 = 0x60)\n",
+                 static_cast<unsigned>(m_maxShaderModel));
     
     return true;
 }

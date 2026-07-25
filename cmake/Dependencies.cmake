@@ -18,9 +18,16 @@ FetchContent_Declare(
     URL_HASH SHA256=D30F756CE05BB4B7705FC1B04A5DED32ED62F2C2A2B392AE8D3318181395C8BC
 )
 
+FetchContent_Declare(
+    dxc
+    URL https://www.nuget.org/api/v2/package/Microsoft.Direct3D.DXC/1.9.2602.24
+    #URL HASH menyusul
+)
+
 FetchContent_MakeAvailable(
     directx_headers
     directxmath
     agility_sdk
+    dxc
 )
 

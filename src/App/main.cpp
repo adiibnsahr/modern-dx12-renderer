@@ -5,6 +5,7 @@
 #include "RHI/CommandContext.hpp"
 #include "RHI/FrameResource.hpp"
 #include "RHI/SwapChain.hpp"
+#include "Renderer/CubeRenderer.hpp"
 
 #include <Windows.h>
 #include <cstdio>
@@ -28,12 +29,19 @@ int main()
     SwapChain swapChain;
     std::array<FrameResource, SwapChain::kBackBufferCount> frames;
     CommandContext commandContext;
+    RenderEngine::Renderer::CubeRenderer cubeRenderer;
 
     try
     {
         if (!graphicsDevice.Initialize())
         {
             std::wprintf(L"[Main] Gagal membuat ID3D12Device (hardware ataupun WARP).\n");
+            return -1;
+        }
+
+        if (graphicsDevice.MaxShaderModel() < D3D_SHADER_MODEL_6_0)
+        {
+            std::wprintf(L"GPU belum mendukung shader 6.0.\n");
             return -1;
         }
 
@@ -47,10 +55,21 @@ int main()
         for (FrameResource& frame : frames) frame.Initialize(graphicsDevice.Device());
 
         commandContext.Initialize(graphicsDevice.Device(), frames[0].CommandAllocator.Get());
+
+        commandContext.Reset(frames[0].CommandAllocator.Get());
+        cubeRenderer.Initialize(graphicsDevice.Device(), commandContext.List());
+        commandContext.Close();
+        commandQueue.ExecuteCommandList(commandContext.List());
+        commandQueue.Flush();
     }
     catch(const DxException& e)
     {
         std::wprintf(L"[Main] DxException: %hs\n", e.what());
+        return -1;
+    }
+    catch(const std::exception& e)
+    {
+        std::wprintf(L"[Main] Expection: %hs\n", e.what());
         return -1;
     }
 
@@ -59,9 +78,12 @@ int main()
     constexpr float kClearColor[4] = { 0.05f, 0.05f, 0.08f, 1.0f };
 
     LARGE_INTEGER perfFreq{};
-    LARGE_INTEGER lastFpsTime{};
     QueryPerformanceFrequency(&perfFreq);
-    QueryPerformanceCounter(&lastFpsTime);
+
+    LARGE_INTEGER appStartTime{};
+    QueryPerformanceFrequency(&appStartTime);
+
+    LARGE_INTEGER lastFpsTime = appStartTime;
     int framesSinceLastFpsUpdate = 0;
 
     UINT lastWidth = window.Width();
@@ -98,6 +120,21 @@ int main()
         commandContext.List()->OMSetRenderTargets(1, &rtv, FALSE, nullptr);
         commandContext.List()->ClearRenderTargetView(rtv, kClearColor, 0, nullptr);
 
+        const D3D12_VIEWPORT viewport{ 0.0f, 0.0f, static_cast<float>(lastWidth), static_cast<float>(lastHeight), 0.0f, 1.0f };
+        const D3D12_RECT scissorRect{ 0, 0, static_cast<LONG>(lastWidth), static_cast<LONG>(lastHeight) };
+        commandContext.List()->RSSetViewports(1, &viewport);
+        commandContext.List()->RSSetScissorRects(1, &scissorRect);
+
+        LARGE_INTEGER now{};
+        QueryPerformanceCounter(&now);
+        const float aspectRatio = static_cast<float>(lastWidth) / static_cast<float>(lastHeight);
+        const float totalTimeSeconds = static_cast<float>(
+            static_cast<double>(now.QuadPart - appStartTime.QuadPart) / static_cast<double>(perfFreq.QuadPart)
+        );
+
+        cubeRenderer.Update(frameIndex, aspectRatio, totalTimeSeconds);
+        cubeRenderer.Draw(commandContext.List(), frameIndex);
+
         commandContext.TransitionBarrier(backBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
         commandContext.Close();
@@ -107,8 +144,6 @@ int main()
         frame.FenceValue = commandQueue.Signal();
 
         ++framesSinceLastFpsUpdate;
-        LARGE_INTEGER now{};
-        QueryPerformanceCounter(&now);
         const double elapsedSec = static_cast<double>(now.QuadPart - lastFpsTime.QuadPart) / static_cast<double>(perfFreq.QuadPart);
 
         if (elapsedSec >= 0.5)

@@ -1,5 +1,7 @@
 #include "CommandContext.hpp"
 
+#include <directx/d3dx12.h>
+
 void CommandContext::Initialize(ID3D12Device* device, ID3D12CommandAllocator* initialAllocator)
 {
     ThrowIfFailed(device->CreateCommandList(
@@ -26,12 +28,6 @@ void CommandContext::Close()
 
 void CommandContext::TransitionBarrier(ID3D12Resource* resource, D3D12_RESOURCE_STATES before, D3D12_RESOURCE_STATES after)
 {
-    D3D12_RESOURCE_BARRIER barrier{};
-    barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-    barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-    barrier.Transition.pResource = resource;
-    barrier.Transition.StateBefore = before;
-    barrier.Transition.StateAfter = after;
-    barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+    const CD3DX12_RESOURCE_BARRIER barrier = CD3DX12_RESOURCE_BARRIER::Transition(resource, before, after);
     m_commandList->ResourceBarrier(1, &barrier);
 }

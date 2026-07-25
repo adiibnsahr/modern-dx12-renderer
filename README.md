@@ -43,6 +43,19 @@ Sebuah project minimalis mesin render
 **Screenshot**
 ![Screenshot v0.0.1](docs/v0.0.2/screenshot_v0.0.2.png)
 
+## Version 0.0.3
+- Root Signature
+- Pipeline State Object
+- Cube Rendering
+
+**Referensi**
+- Buku Frank Luna (Introduction Game Programming DX12 Second Edition): Chapter 6 dan 7 Root Signature, PSO, Geometri kubus
+- Microsoft Sample: `D3D12_INPUT_ELEMENT_DESC`, `D3D12_GRAPHICS_PIPELINE_STATE_DESC`
+- Microsoft Learn: `microsoft/DirectX-Headers`, `<directx/d3dx12.h>`, `D3D12SerializeRootSignature`, `D3D12_FEATURE_DATA_SHADER_MODEL`.
+
+**Screenshot**
+![Screenshot v0.0.1](docs/v0.0.3/screenshot_v0.0.3.png)
+
 **Build dan Run**
 ```bash
 cmake --preset windows-msvc
