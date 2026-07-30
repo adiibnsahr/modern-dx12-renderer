@@ -166,17 +166,9 @@ namespace RenderEngine::Renderer
         m_ibv.SizeInBytes = static_cast<UINT>(ibByteSize);
     }
 
-    void CubeRenderer::Update(UINT frameIndex, float aspectRatio, float totalTimeSeconds)
+    void CubeRenderer::Update(UINT frameIndex, const DirectX::XMMATRIX& view, const DirectX::XMMATRIX& proj, float totalTimeSeconds)
     {
         const XMMATRIX world = DirectX::XMMatrixRotationY(totalTimeSeconds);
-        
-        const XMVECTOR eyePos = DirectX::XMVectorSet(0.0f, 1.5f, -5.0f, 1.0f);
-        const XMVECTOR focusPos = DirectX::XMVectorZero();
-        const XMVECTOR upDir = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-        const XMMATRIX view = DirectX::XMMatrixLookAtLH(eyePos, focusPos, upDir);
-
-        const XMMATRIX proj = DirectX::XMMatrixPerspectiveFovLH(XM_PIDIV4, aspectRatio, 0.1f, 100.0f);
-
         const XMMATRIX worldViewProjection = world * view * proj;
 
         ObjectConstansts objConstants;

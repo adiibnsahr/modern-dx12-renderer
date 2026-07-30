@@ -10,6 +10,7 @@ Sebuah project minimalis mesin render
 | Graphics API | DirectX 12 (Agility SDK, Feature Level target `12_2`, minimum `11_0`) |
 | Build system | CMake ≥ 4.3 (`FetchContent`, tanpa vcpkg) |
 | Compiler | MSVC (Visual Studio 2026 Build Tools) |
+| Math | DirectXMath |
 | OS target | Windows 11 |
 | Windowing | Win32 native |
 
@@ -38,10 +39,10 @@ Sebuah project minimalis mesin render
 - Microsoft Learn: `IDXGISwapChain2::SetMaximumFrameLatency`, `GetFrameLatencyWaitableObject`, `IDXGIFactory2::CreateSwapChainForHwnd`
 
 **Flow**
-![Flowchart v0.0.1](docs/v0.0.2/flowchart_v0.0.2.png)
+![Flowchart v0.0.2](docs/v0.0.2/flowchart_v0.0.2.png)
 
 **Screenshot**
-![Screenshot v0.0.1](docs/v0.0.2/screenshot_v0.0.2.png)
+![Screenshot v0.0.2](docs/v0.0.2/screenshot_v0.0.2.png)
 
 ## Version 0.0.3
 - Root Signature
@@ -54,7 +55,19 @@ Sebuah project minimalis mesin render
 - Microsoft Learn: `microsoft/DirectX-Headers`, `<directx/d3dx12.h>`, `D3D12SerializeRootSignature`, `D3D12_FEATURE_DATA_SHADER_MODEL`.
 
 **Screenshot**
-![Screenshot v0.0.1](docs/v0.0.3/screenshot_v0.0.3.png)
+![Screenshot v0.0.3](docs/v0.0.3/screenshot_v0.0.3.png)
+
+## Version 0.0.4
+- Camera system minimalist
+- Input system
+- Time system
+
+**Referensi**
+- Buku Frank Luna (Introduction Game Programming DX12 Second Edition): `Common/Camera.h`/`Common/GameTimer.h`
+- Kontrol kamera editor Unity (RMB, WASD, Mouselook, Q/E, Shift)
+
+**Screenshot**
+![Screenshot v0.0.4](docs/v0.0.4/screenshot_v0.0.4.png)
 
 **Build dan Run**
 ```bash
@@ -77,6 +90,7 @@ A minimal rendering engine project built with modern DirectX 12.
 | Graphics API | DirectX 12 (Agility SDK, target Feature Level `12_2`, minimum `11_0`) |
 | Build System | CMake ≥ 4.3 (`FetchContent`, no vcpkg) |
 | Compiler | MSVC (Visual Studio 2026 Build Tools) |
+| Shader | HLSL DXC (Shader Model 6.x) |
 | Target OS | Windows 11 |
 | Windowing | Native Win32 |
 

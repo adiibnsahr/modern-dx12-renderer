@@ -35,6 +35,12 @@ add_executable(App
     src/RHI/UploadBuffer.hpp
     src/Renderer/CubeRenderer.hpp
     src/Renderer/CubeRenderer.cpp
+    src/Platform/Time.hpp
+    src/Platform/Time.cpp
+    src/Platform/Input.hpp
+    src/Platform/Input.cpp
+    src/Scene/Camera.hpp
+    src/Scene/Camera.cpp
 )
 
 target_include_directories(App PRIVATE

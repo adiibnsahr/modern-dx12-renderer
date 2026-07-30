@@ -28,7 +28,7 @@ namespace RenderEngine::Renderer
 
         void Initialize(ID3D12Device* device, ID3D12GraphicsCommandList* uploadCommandList);
 
-        void Update(UINT frameIndex, float aspectRatio, float totalTimeSeconds);
+        void Update(UINT frameIndex, const DirectX::XMMATRIX& view, const DirectX::XMMATRIX& proj, float totalTimeSeconds);
 
         void Draw(ID3D12GraphicsCommandList* commandList, UINT frameIndex);
 
