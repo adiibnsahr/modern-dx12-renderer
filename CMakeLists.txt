@@ -33,6 +33,8 @@ add_executable(App
     src/RHI/SwapChain.hpp
     src/RHI/SwapChain.cpp
     src/RHI/UploadBuffer.hpp
+    src/RHI/DescriptorHeapAllocator.hpp
+    src/RHI/DescriptorHeapAllocator.cpp
     src/Renderer/CubeRenderer.hpp
     src/Renderer/CubeRenderer.cpp
     src/Platform/Time.hpp
@@ -41,10 +43,22 @@ add_executable(App
     src/Platform/Input.cpp
     src/Scene/Camera.hpp
     src/Scene/Camera.cpp
+    src/Editor/EditorUI.hpp
+    src/Editor/EditorUI.cpp
+
+    # Imgui
+    ${imgui_SOURCE_DIR}/imgui.cpp
+    ${imgui_SOURCE_DIR}/imgui_draw.cpp
+    ${imgui_SOURCE_DIR}/imgui_tables.cpp
+    ${imgui_SOURCE_DIR}/imgui_widgets.cpp
+    ${imgui_SOURCE_DIR}/backends/imgui_impl_win32.cpp
+    ${imgui_SOURCE_DIR}/backends/imgui_impl_dx12.cpp
 )
 
 target_include_directories(App PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${imgui_SOURCE_DIR}
+    ${imgui_SOURCE_DIR}/backends
 )
 
 target_compile_definitions(App PRIVATE
@@ -52,6 +66,7 @@ target_compile_definitions(App PRIVATE
     _UNICODE
     NOMINMAX
     WIN32_LEAN_AND_MEAN
+    IMGUI_IMPL_WIN32_DISABLE_GAMEPAD
 )
 
 target_compile_options(App PRIVATE /W4)

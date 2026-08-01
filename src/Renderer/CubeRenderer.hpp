@@ -32,6 +32,9 @@ namespace RenderEngine::Renderer
 
         void Draw(ID3D12GraphicsCommandList* commandList, UINT frameIndex);
 
+        void SetWireframe(bool enabled) {m_wireframeEnabled = enabled; }
+        [[nodiscard]] bool IsWireframe() const { return m_wireframeEnabled; }
+
     private:
         void BuildRootSignature(ID3D12Device* device);
         void BuildPipelineState(ID3D12Device* device);
@@ -39,6 +42,8 @@ namespace RenderEngine::Renderer
 
         Microsoft::WRL::ComPtr<ID3D12RootSignature> m_rootSignature;
         Microsoft::WRL::ComPtr<ID3D12PipelineState> m_pso;
+        Microsoft::WRL::ComPtr<ID3D12PipelineState> m_wireframePso;
+        bool m_wireframeEnabled = false;
 
         Microsoft::WRL::ComPtr<ID3D12Resource> m_vertexBufferGPU;
         Microsoft::WRL::ComPtr<ID3D12Resource> m_vertexBufferUploader;

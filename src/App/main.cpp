@@ -9,6 +9,7 @@
 #include "RHI/SwapChain.hpp"
 #include "Scene/Camera.hpp"
 #include "Renderer/CubeRenderer.hpp"
+#include "Editor/EditorUI.hpp"
 
 #include <DirectXMath.h>
 #include <Windows.h>
@@ -45,6 +46,7 @@ int main()
     RenderEngine::Scene::Camera camera;
     RenderEngine::Platform::Input input;
     RenderEngine::Platform::Time time;
+    RenderEngine::Editor::EditorUI editor;
 
     try
     {
@@ -70,6 +72,9 @@ int main()
         for (FrameResource& frame : frames) frame.Initialize(graphicsDevice.Device());
 
         commandContext.Initialize(graphicsDevice.Device(), frames[0].CommandAllocator.Get());
+
+        editor.Initialize(window, graphicsDevice.Device(), commandQueue.Get(),
+                          SwapChain::kBackBufferCount, SwapChain::kBackBufferFormat);
 
         commandContext.Reset(frames[0].CommandAllocator.Get());
         cubeRenderer.Initialize(graphicsDevice.Device(), commandContext.List());
@@ -98,6 +103,10 @@ int main()
 
     float lastFpsUpdateTime = 0.0f;
     int frameSinceLastFpsUpdate = 0;
+
+    float currentFps = 0.0f;
+
+    bool wireframeEnabled = false;
 
     UINT lastWidth = window.Width();
     UINT lastHeight = window.Height();
@@ -139,6 +148,10 @@ int main()
 
         camera.Update(time.DeltaTime());
 
+        editor.NewFrame();
+        editor.BuildDebugPanel(graphicsDevice, camera, wireframeEnabled, currentFps);
+        cubeRenderer.SetWireframe(wireframeEnabled);
+
         swapChain.WaitForFrameLatency();
 
         const UINT frameIndex = swapChain.CurrentBackBufferIndex();
@@ -160,9 +173,10 @@ int main()
         commandContext.List()->RSSetViewports(1, &viewport);
         commandContext.List()->RSSetScissorRects(1, &scissorRect);
 
-
         cubeRenderer.Update(frameIndex, camera.GetView(), camera.GetProj(), time.TotalTime());
         cubeRenderer.Draw(commandContext.List(), frameIndex);
+
+        editor.Render(commandContext.List());
 
         commandContext.TransitionBarrier(backBuffer, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
@@ -176,9 +190,9 @@ int main()
         const float elapsedSinceFpsUpdate = time.TotalTime() - lastFpsUpdateTime;
         if (elapsedSinceFpsUpdate >= 0.5)
         {
-            const double fps = frameSinceLastFpsUpdate / elapsedSinceFpsUpdate;
+            currentFps = frameSinceLastFpsUpdate / elapsedSinceFpsUpdate;
             wchar_t fpsText[64];
-            swprintf_s(fpsText, L"%.1f FPS", fps);
+            swprintf_s(fpsText, L"%.1f FPS", currentFps);
             window.SetTitle(L"Render Engine | " + graphicsDevice.DescribeForTitleBar() + L" | " + fpsText);
             frameSinceLastFpsUpdate = 0;
             lastFpsUpdateTime = time.TotalTime();
@@ -186,6 +200,7 @@ int main()
     }
 
     commandQueue.Flush();
+    editor.Shutdown();
 
     std::wprintf(L"============= Render Engine keluar dengan normal =============\n");
     return 0;

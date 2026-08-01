@@ -98,6 +98,8 @@ LRESULT CALLBACK Win32Window::WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM
 
 LRESULT Win32Window::HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+    if (m_messageHook && m_messageHook(hwnd, msg, wParam, lParam)) return true;
+
     switch (msg)
     {
         case WM_DESTROY:

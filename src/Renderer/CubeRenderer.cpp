@@ -125,6 +125,10 @@ namespace RenderEngine::Renderer
         psoDesc.SampleDesc.Quality = 0;
 
         ThrowIfFailed(device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pso)));
+
+        D3D12_GRAPHICS_PIPELINE_STATE_DESC wireframeDesc = psoDesc;
+        wireframeDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+        ThrowIfFailed(device->CreateGraphicsPipelineState(&wireframeDesc, IID_PPV_ARGS(&m_wireframePso)));
     }
 
     void CubeRenderer::BuildCubeGeometry(ID3D12Device* device, ID3D12GraphicsCommandList* uploadCommandList)
@@ -181,7 +185,7 @@ namespace RenderEngine::Renderer
     void CubeRenderer::Draw(ID3D12GraphicsCommandList* commandList, UINT frameIndex)
     {
         commandList->SetGraphicsRootSignature(m_rootSignature.Get());
-        commandList->SetPipelineState(m_pso.Get());
+        commandList->SetPipelineState(m_wireframeEnabled ? m_wireframePso.Get() : m_pso.Get());
 
         commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         commandList->IASetVertexBuffers(0, 1, &m_vbv);

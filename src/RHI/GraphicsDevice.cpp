@@ -161,3 +161,15 @@ std::wstring GraphicsDevice::DescribeForTitleBar() const
 
     return m_adapterDescription + L" | FeatureLevel " + levelStr + (m_usingWarp ? L" | WARP" : L" | Hardware");
 }
+
+const char* GraphicsDevice::FeatureLevelToString(D3D_FEATURE_LEVEL level)
+{
+    switch (level)
+    {
+        case D3D_FEATURE_LEVEL_12_2: return "12_2";
+        case D3D_FEATURE_LEVEL_12_1: return "12_1";
+        case D3D_FEATURE_LEVEL_12_0: return "12_0";
+        case D3D_FEATURE_LEVEL_11_0: return "11_0";
+        default: return "?";
+    }
+}

@@ -19,6 +19,9 @@ public:
 
     void SetTitle(const std::wstring& title);
 
+    using MessageHook = LRESULT (*)(HWND, UINT, WPARAM, LPARAM);
+    void SetMessageHook(MessageHook hook) { m_messageHook = hook; }
+
     [[nodiscard]] HWND Handle() const { return m_hwnd; }
     [[nodiscard]] uint32_t Width() const { return m_width; }
     [[nodiscard]] uint32_t Height() const { return m_height; }
@@ -37,6 +40,7 @@ private:
     uint32_t m_height = 0;
     bool m_minimized = false;
     bool m_shouldClose = false;
+    MessageHook m_messageHook = nullptr;
 
     static constexpr wchar_t kWindowClassName[] = L"ModernD3D12RendererClass";
 };

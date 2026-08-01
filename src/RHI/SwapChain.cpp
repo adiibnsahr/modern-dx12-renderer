@@ -75,7 +75,7 @@ void SwapChain::WaitForFrameLatency() const
 
 void SwapChain::Present()
 {
-    ThrowIfFailed(m_swapChain->Present(1, 0));
+    ThrowIfFailed(m_swapChain->Present(0, 0));
 }
 
 UINT SwapChain::CurrentBackBufferIndex() const

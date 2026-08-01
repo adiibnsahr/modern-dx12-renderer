@@ -28,6 +28,8 @@ public:
 
     [[nodiscard]] std::wstring DescribeForTitleBar() const;
 
+    [[nodiscard]] static const char* FeatureLevelToString(D3D_FEATURE_LEVEL level);
+
 private:
     void CreateFactory();
     void EnableDebugLayerIfNeeded();

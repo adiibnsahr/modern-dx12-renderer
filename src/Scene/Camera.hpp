@@ -21,6 +21,12 @@ namespace RenderEngine::Scene
 
         [[nodiscard]] DirectX::XMMATRIX GetView() const;
         [[nodiscard]] DirectX::XMMATRIX GetProj() const;
+
+        [[nodiscard]] float ForceStrength() const { return m_forceStrength; }
+        void SetForceStrength(float value) { m_forceStrength = value; }
+
+        [[nodiscard]] float DampingPerSecond() const { return m_dampingPerSecond; }
+        void SetDampingPerSecond(float value) { m_dampingPerSecond = value; }
     private:
         void UpdateViewMatrix();
 
